@@ -10,5 +10,7 @@ Bottle.py
 
 Installation:
 
-1. Follow data/install.txt
-2. python main.py
+1. cd data
+2. Follow the instructions in install.txt
+3. cd ..
+4. python superjoin-web/main.py
