@@ -4,12 +4,12 @@ from bottle import route, run, template, get
 import pymongo
 
 
-@get('/metadata')
+@get('/slices')
 def metadata():
 
     db = pymongo.Connection()['mr_demo']
 
-    tables = list(db.metadata.find({}, { 'name': 1}))
+    tables = list(db.slices.find({}, { 'name': 1}))
     tableNames = [t['name'] for t in tables]
 
     return {
