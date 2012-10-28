@@ -1,10 +1,7 @@
 __author__ = 'Paolo'
 
-import os
-import sys
 from bottle import route, run, template, get
 import pymongo
-from bson import BSON
 from bson.json_util import dumps
 
 @get('/slices')
@@ -27,8 +24,7 @@ def tabledata(name):
     
     data = list(data_collection.find({}))
     json_data = dumps(data)
-  
+
     return json_data
     
-    
-run(host='localhost', port=8080)
+run(host='localhost', port=8080, reloader=True)
