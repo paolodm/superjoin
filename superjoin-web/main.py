@@ -5,7 +5,7 @@ import pymongo
 from bson.json_util import dumps
 
 @get('/slices')
-def slices():
+def getslices():
 
     db = pymongo.Connection()['mr_demo']
 
@@ -14,11 +14,19 @@ def slices():
 
     return {
         'count' : len(tableNames),
-        'collections' : tableNames
+        'slices' : tableNames
     }
 
+@get('/concepts')
+def getconcepts():
+    return {'concepts':""}
+
+@get('/tables')
+def get_table_info():
+    return {'tables':''}
+
 @route('/tabledata/<name>')
-def tabledata(name):
+def gettabledata(name):
     db = pymongo.Connection()['mr_demo']
     data_collection = db[name]
     

@@ -43,6 +43,14 @@ function(key, values) {
 }
 """)
 
+slices_collection = db['slices']
+    
+slice1 = {"id":"joined",
+             "name":"joined",
+             "table":"joined"}
+
+slices_collection.insert(slice1)
+
 db.life_expectancy.map_reduce(life_expect_map, reducer, {'reduce': 'joined'} )
 db.us_economic_assistance.map_reduce(us_econ_map, reducer, {'reduce': 'joined'} )
-# print db.joined.find({'value.dollars': {'$gt':0}, 'value.life_expectancy': {'$gt':0}})[2]
+#print db.joined.find({'value.dollars': {'$gt':0}, 'value.life_expectancy': {'$gt':0}})[2]
