@@ -1,6 +1,6 @@
 __author__ = 'Paolo'
 
-from bottle import route, run, template, get
+from bottle import route, run, template, get,request, response
 import pymongo
 from bson.json_util import dumps
 
@@ -24,6 +24,26 @@ def getconcepts():
 @get('/tables')
 def get_table_info():
     return {'tables':''}
+
+@route('/join')
+def join_tables():
+    
+    table1 = request.query.table1
+    table2 = request.query.table2
+    joined_column = request.query.column
+    tablelist = [table1, table2, joined_column]
+    
+    # create new table name
+    
+    # create map
+    
+    # create reduce
+    
+    
+    
+    return dumps(tablelist)
+    
+
 
 @route('/tabledata/<name>')
 def gettabledata(name):

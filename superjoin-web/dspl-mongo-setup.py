@@ -5,6 +5,19 @@ Created on Oct 14, 2012
 '''
 from pymongo import Connection
 
+
+
+def insertSlice(database, slice_name):
+    db = connection[database]
+    
+    slices_collection = db['slices']
+
+    slice2 = {"id":slice_name,
+             "name":slice_name,
+             "table":slice_name}
+    
+    slices_collection.insert(slice2)
+
 if __name__ == '__main__':
     connection = Connection()
     print "Connection is successful"
