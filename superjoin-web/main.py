@@ -1,6 +1,8 @@
 __author__ = 'Paolo'
 
-from bottle import route, run, template, get, response, static_file
+
+from bottle import route, run, template, get,request, response,static_file
+
 import pymongo
 import MongoEncoder
 
@@ -29,6 +31,26 @@ def getslices():
 @post
 def join(data):
     sys.stdout.write("i am joining the data with slice 1: %d and slice 2: %d" % (data.slice1, data.slice2))
+
+@route('/join')
+def join_tables():
+    
+    table1 = request.query.table1
+    table2 = request.query.table2
+    joined_column = request.query.column
+    tablelist = [table1, table2, joined_column]
+    
+    # create new table name
+    
+    # create map
+    
+    # create reduce
+    
+    
+    
+    return dumps(tablelist)
+    
+
 
 @route('/tabledata/<name>')
 def gettabledata(name):
