@@ -4,7 +4,7 @@ __author__ = 'Paolo'
 from bottle import route, run, template, get,request, response,static_file
 
 import pymongo
-from bson.json_util import dumps
+import MongoEncoder
 
 from dspl_utils import *
 
@@ -22,21 +22,17 @@ def getslices():
 
     db = pymongo.Connection()['mr_demo']
 
-    tables = list(db.slices.find({}, { 'name': 1}))
+    tables = list(db.slices.find({}))
     tableNames = [t['name'] for t in tables]
 
     return {
-        'count' : len(tableNames),
+        'count' : len(tables),
         'slices' : tableNames
     }
 
-@get('/concepts')
-def getconcepts():
-    return {'concepts':""}
-
-@get('/tables')
-def get_table_info():
-    return {'tables':''}
+@post
+def join(data):
+    sys.stdout.write("i am joining the data with slice 1: %d and slice 2: %d" % (data.slice1, data.slice2))
 
 @route('/join')
 def join_tables():
