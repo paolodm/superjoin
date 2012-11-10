@@ -6,6 +6,8 @@ from bottle import route, run, template, get,request, response,static_file
 import pymongo
 from bson.json_util import dumps
 
+from dspl_utils import *
+
 @route('/static/:path#.+#', name='static')
 def static(path):
     return static_file(path, root='static')
@@ -42,9 +44,18 @@ def join_tables():
     table1 = request.query.table1
     table2 = request.query.table2
     joined_column = request.query.column
+    joined_table = request.quest.new_table
     tablelist = [table1, table2, joined_column]
     
     # create new table name
+    database = 'mr_demo'
+
+    insert_slice(database,new_table)
+    
+    # get table1 columns
+    
+    # get table2 columns
+    
     
     # create map
     

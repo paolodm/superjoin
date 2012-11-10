@@ -4,7 +4,7 @@ superjoin
 Requirements:
 
 Python 2.7+
-MongoDB
+MongoDB 2.2+
 Bottle.py
 
 
