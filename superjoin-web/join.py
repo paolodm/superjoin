@@ -23,6 +23,16 @@ us_econ_map   = Code("""
 }
 """)
 
+def create_map(joined_column):
+    
+    map_code = Code("""
+    function(){
+    emit(this.country, 
+    
+    """)
+    
+    return map_code
+    
 reducer = Code("""
 function(key, values) {
 
