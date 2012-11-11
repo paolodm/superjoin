@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <script language="javaScript" type="text/javascript" src="/static/jquery.min.js"></script>
+        <script language="javaScript" type="text/javascript" src="/static/knockout-2.1.0.js"></script>
+        <script language="javaScript" type="text/javascript" src="/static/MainViewModel.js"></script>
+
+        <script language="javascript" type="text/javascript">
+
+
+            $(function() {
+                window.viewModel = new MainViewModel();
+
+                $.ajax({
+                    url: '/slices',
+                    success: function(data) {
+                        viewModel.slices(data.slices)
+                    }
+                });
+                ko.applyBindings(viewModel);
+            });
+        </script>
+    </head>
+    <body>
+
+        <table>
+            <tr>
+                <td>
+                    <label>Slice 1:</label>
+                    <select data-bind="options: slices, optionsValue: $data, optionsText: $data"></select>
+                </td>
+                <td>
+                    <label>Slice 2:</label>
+                    <select data-bind="options: slices, optionsValue: $data, optionsText: $data"></select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <input type="button" value="Join" data-bind="click: Join" />
+                </td>
+            </tr>
+        </table>
+
+
+
+    </body>
+</html>
