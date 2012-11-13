@@ -30,7 +30,7 @@ def create_map(joined_column, columns):
     
     column_dict = dict()
     
-    for column in columns:
+    for column in tuple(columns):
         if not (joined_column == column):
             column_dict[column] = """this.%s""" % column
     
@@ -48,7 +48,8 @@ def create_map(joined_column, columns):
     return map_code
 
 def create_reducer(joined_column):
-  
+ 
+#                 if (!merged.hasOwnProperty(attrname)) 
     code_text = """
     function(key, values) {
     
@@ -57,17 +58,16 @@ def create_reducer(joined_column):
         values.forEach(function(value) {
             for (var attrname in value) {
     
-                if (!merged.hasOwnProperty(attrname))
+                    
                     merged[attrname] = value[attrname];
             }
         });
     
-
+        merged['%s'] = key;
     
         return merged;
     }
-    """ 
-#//% joined_column
+    """ % joined_column
     
     reduce_code = Code(code_text)
     
@@ -97,19 +97,17 @@ function(key, values) {
 """)
 
 if __name__ == '__main__':
-    slices_collection = db['slices']
-        
-    slice1 = {"id":"joined",
-                 "name":"joined",
-                 "table":"joined"}
     
-    slices_collection.insert(slice1)
+    temp_table = 'temp'
+    db[temp_table].remove()
+    
+    slices_collection = db['slices']
      
-    life_expect_map = create_map("country", ['age'])
+    life_expect_map = create_map("country", ('country','age'))
 
     life_expect_reducer = create_reducer("country")
     
-    stunted_map = create_map("country", ["Year", "Value"])
+    stunted_map = create_map("country", ("year", "Value"))
    
     stunted_reducer = create_reducer("country")
     
@@ -119,14 +117,21 @@ if __name__ == '__main__':
     print life_expect_map
     print life_expect_reducer
     
-    slice1 = {"id":"life_stunted",
-                 "name":"life_stunted",
-                 "table":"life_stunted"}
+    join_table_name = "life_stunted"
+    slice1 = {"id":join_table_name,
+                 "name":join_table_name,
+                 "table":join_table_name}
+    
+    db[join_table_name].remove()
     
     slices_collection.insert(slice1)
-    
-    db.stunted_age.map_reduce(stunted_map,stunted_reducer,{'reduce':'life_stunted'} )
-    db.life_expectancy.map_reduce(life_expect_map, life_expect_reducer, {'reduce': 'life_stunted'} )
 
+    db.stunted_age.map_reduce(stunted_map,stunted_reducer,{'reduce':temp_table} )
+    db.life_expectancy.map_reduce(life_expect_map, life_expect_reducer, {'reduce': temp_table} )
+
+    values = [row['value'] for row in list(db[temp_table].find())]
+    
+    db['life_stunted'].insert(values)
+    
     
     #print db.joined.find({'value.dollars': {'$gt':0}, 'value.life_expectancy': {'$gt':0}})[2]
