@@ -3,4 +3,4 @@ In Mongo console, run the following two scripts:
 
 mongoimport --file us_economic_assistance.csv --headerline --type csv -d mr_demo -c us_economic_assistance --drop --ignoreBlanks
 mongoimport --file life_expectancy.tsv --headerline --type tsv -d mr_demo -c life_expectancy --drop --ignoreBlanks
-mongoimport --file stunted.csv --headerline --type csv -d mr_demo -c stunted --drop --ignoreBlanks
+mongoimport --file stunted.csv --headerline --type csv -d mr_demo -c stunted_age --drop --ignoreBlanks
