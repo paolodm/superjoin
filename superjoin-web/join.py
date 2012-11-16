@@ -102,14 +102,15 @@ if __name__ == '__main__':
     db[temp_table].remove()
     
     slices_collection = db['slices']
-     
-    life_expect_map = create_map("country", ('country','age'))
-
-    life_expect_reducer = create_reducer("country")
     
-    stunted_map = create_map("country", ("year", "Value"))
+    join_column = "country"
+    life_expect_map = create_map(join_column, ('country','age'))
+
+    life_expect_reducer = create_reducer(join_column)
+    
+    stunted_map = create_map(join_column, ("year", "value"))
    
-    stunted_reducer = create_reducer("country")
+    stunted_reducer = create_reducer(join_column)
     
     print stunted_map
     print stunted_reducer
@@ -129,9 +130,15 @@ if __name__ == '__main__':
     db.stunted_age.map_reduce(stunted_map,stunted_reducer,{'reduce':temp_table} )
     db.life_expectancy.map_reduce(life_expect_map, life_expect_reducer, {'reduce': temp_table} )
 
-    values = [row['value'] for row in list(db[temp_table].find())]
-    
+    # Add the values from temp table into new list
+    values = []
+    for row in list(db[temp_table].find()):
+        if row['value'].has_key(join_column): 
+            values.append(row['value'])
+        else:
+            temp_dict = row['value']
+            temp_dict[join_column] = row['_id']
+            values.append(temp_dict)
+    # Insert list into new joined collection
     db['life_stunted'].insert(values)
     
-    
-    #print db.joined.find({'value.dollars': {'$gt':0}, 'value.life_expectancy': {'$gt':0}})[2]
