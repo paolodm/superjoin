@@ -12,11 +12,29 @@ from join import *
 
 def get_columns(database, table_name):
     
-    db = connection[database]
+    db = Connection()[database]
     
     columns = db.tables.find_one({"table":table_name})
+    column_list = ()
     
-    return columns['columns']
+    for column in columns['columns']:
+        column_list = column_list + (column.encode('ascii','ignore'),)
+    
+    return column_list
+
+def get_columns_without_joined(database, table_name,joined_column):
+    
+    db = Connection()[database]
+    
+    columns = db.tables.find_one({"table":table_name})
+    column_list = ()
+    
+    for column in columns['columns']:
+        if(column.encode('ascii','ignore') != joined_column):
+            column_list = column_list + (column.encode('ascii','ignore'),)
+    
+    return column_list
+
 
 def insert_table(database,table, columns):
     db = connection[database]
@@ -48,23 +66,19 @@ if __name__ == '__main__':
     database = 'mr_demo'
  
     slice_name = "life_expectancy"
-
-    insert_slice(database, slice_name)
-    
-    slice_name = "us_economic_assistance"
-    
-    insert_slice(database, slice_name)
-    
     columns = ["id","country", "age"]
     
+    insert_slice(database, slice_name)
     insert_table(database, slice_name, columns)
     
-    newcolumns = get_columns(database, slice_name)
+    slice_name = "stunted_age"
+    
+    columns = ["country","year","value"]
+    insert_slice(database, slice_name)
+    insert_table(database, slice_name, columns)
+
+    newcolumns = get_columns_without_joined(database, slice_name, "country")
     
     print newcolumns
-    
-#    print create_map("country")
-    
-    print create_map("country", columns)
     
     print "slices inputed"

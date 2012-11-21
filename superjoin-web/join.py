@@ -2,7 +2,7 @@ __author__ = 'Paolo'
 import pymongo
 from bson.code import Code
 from itertools import izip
-
+from dspl_utils import *
 
 
 db = pymongo.Connection()['mr_demo']
@@ -73,9 +73,84 @@ def create_reducer(joined_column):
     
     return reduce_code
 
-
-
+def create_outer_join_table(table1, table2, join_column, column_list_1, column_list_2):
+    temp_table = 'temp'
+    db[temp_table].remove()
     
+    slices_collection = db['slices']
+    
+    join_map_1 = create_map(join_column, column_list_1)
+
+    join_reducer_1 = create_reducer(join_column)
+
+    join_map_2 = create_map(join_column, column_list_2)
+   
+    join_reducer_2 = create_reducer(join_column)
+    
+    join_table_name = "%s_%s" % (table1, table2)
+    slice1 = {"id":join_table_name,
+                 "name":join_table_name,
+                 "table":join_table_name}
+    
+    db[join_table_name].remove()
+    
+    slices_collection.insert(slice1)
+
+    db[table2].map_reduce(join_map_2,join_reducer_2,{'reduce':temp_table} )
+    
+    db[table1].map_reduce(join_map_1, join_reducer_1, {'reduce': temp_table} )
+
+    # Add the values from temp table into new list
+    values = []
+    for row in list(db[temp_table].find()):
+        if row['value'].has_key(join_column): 
+            values.append(row['value'])
+        else:
+            temp_dict = row['value']
+            temp_dict[join_column] = row['_id']
+            values.append(temp_dict)
+    # Insert list into new joined collection
+    db[join_table_name].insert(values)
+    
+    
+def create_inner_join_table(table1, table2, join_column, column_list_1, column_list_2):
+    temp_table = 'temp'
+    db[temp_table].remove()
+    
+    slices_collection = db['slices']
+    
+    join_map_1 = create_map(join_column, column_list_1)
+
+    join_reducer_1 = create_reducer(join_column)
+
+    join_map_2 = create_map(join_column, column_list_2)
+   
+    join_reducer_2 = create_reducer(join_column)
+    
+    join_table_name = "%s_%s" % (table1, table2)
+    slice1 = {"id":join_table_name,
+                 "name":join_table_name,
+                 "table":join_table_name}
+    
+    db[join_table_name].remove()
+    
+    slices_collection.insert(slice1)
+
+    db[table2].map_reduce(join_map_2,join_reducer_2,{'reduce':temp_table} )
+    
+    db[table1].map_reduce(join_map_1, join_reducer_1, {'reduce': temp_table} )
+
+    # Add the values from temp table into new list
+    values = []
+    for row in list(db[temp_table].find()):
+        if row['value'].has_key(join_column): 
+            values.append(row['value'])
+            
+    # Insert list into new joined collection
+    db[join_table_name].insert(values)
+    print db[join_table_name].find({})
+    return values
+
 reducer = Code("""
 function(key, values) {
 
@@ -96,49 +171,30 @@ function(key, values) {
 }
 """)
 
+
+
 if __name__ == '__main__':
     
-    temp_table = 'temp'
-    db[temp_table].remove()
-    
-    slices_collection = db['slices']
+    table1 = 'stunted_age'
+    table2 = 'life_expectancy'
     
     join_column = "country"
-    life_expect_map = create_map(join_column, ('country','age'))
 
-    life_expect_reducer = create_reducer(join_column)
+    database = 'mr_demo'
+        
+        # get table1 columns
+#    columns1 = get_columns_without_joined(database, table1, join_column)
+    columns1 = ['year', 'value']
     
-    stunted_map = create_map(join_column, ("year", "value"))
-   
-    stunted_reducer = create_reducer(join_column)
+    columns2 = ['age']
+    # get table1 columns
+#    columns2 = get_columns_without_joined(database, table2, join_column)
     
-    print stunted_map
-    print stunted_reducer
+    print columns1
     
-    print life_expect_map
-    print life_expect_reducer
+    print columns2
     
-    join_table_name = "life_stunted"
-    slice1 = {"id":join_table_name,
-                 "name":join_table_name,
-                 "table":join_table_name}
-    
-    db[join_table_name].remove()
-    
-    slices_collection.insert(slice1)
-
-    db.stunted_age.map_reduce(stunted_map,stunted_reducer,{'reduce':temp_table} )
-    db.life_expectancy.map_reduce(life_expect_map, life_expect_reducer, {'reduce': temp_table} )
-
-    # Add the values from temp table into new list
-    values = []
-    for row in list(db[temp_table].find()):
-        if row['value'].has_key(join_column): 
-            values.append(row['value'])
-        else:
-            temp_dict = row['value']
-            temp_dict[join_column] = row['_id']
-            values.append(temp_dict)
-    # Insert list into new joined collection
-    db['life_stunted'].insert(values)
+    join_list = create_inner_join_table(table2, table1, join_column, columns2, columns1)
+#    
+    print join_list
     
