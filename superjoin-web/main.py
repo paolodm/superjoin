@@ -30,15 +30,14 @@ def getslices():
     }
 
 
-@post
-def join(data):
-    sys.stdout.write("i am joining the data with slice 1: %d and slice 2: %d" % (data.slice1, data.slice2))
-
-##@route('/join')
-#def join_tables():
-#    
-#    table1 = request.query.table1
-#    table2 = request.query.table2
+@get('/join')
+def join():
+    #sys.stdout.write("i am joining the data with slice 1: %d and slice 2: %d" % (data.slice1, data.slice2))
+    
+    print "The joined colum is %s" % request.query.joined_column
+    
+    table1 = request.query.slice1
+    table2 = request.query.slice2
 #    joined_column = request.query.column
 #    joined_table = request.quest.new_table
 #    tablelist = [table1, table2, joined_column]
@@ -54,15 +53,21 @@ def join(data):
 #    # get table1 columns
 #    columns2 = get_columns(database, table2)
 #    
-#    # create map
+    # create map
+    
+    
+    
+    # create reduce
+    
+    
+    
+
+    return {}
+    
+##@route('/join')
+#def join_tables():
 #    
-#    
-#    
-#    # create reduce
-#    
-#    
-#    
-#    return dumps(tablelist)
+
     
 
 

@@ -23,21 +23,28 @@
     <body>
 
         <table>
+         <form method="get" action="/join">
             <tr>
+           
                 <td>
                     <label>Slice 1:</label>
-                    <select data-bind="options: slices, optionsValue: $data, optionsText: $data"></select>
+                    <select name="slice1" data-bind="options: slices, optionsValue: $data, optionsText: $data"></select>
                 </td>
                 <td>
                     <label>Slice 2:</label>
-                    <select data-bind="options: slices, optionsValue: $data, optionsText: $data"></select>
+                    <select name="slice2" data-bind="options: slices, optionsValue: $data, optionsText: $data"></select>
                 </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <input type="button" value="Join" data-bind="click: Join" />
+                <td>
+                    <label>Joined Column</label>
+                    <input name="joined_column" type="text" />    
                 </td>
+                <td>
+                <input type="submit" value="Join">
+                </td>
+                
+      
             </tr>
+            </form>
         </table>
 
 
