@@ -9,7 +9,7 @@ def create_map(joined_column, columns):
     
     column_dict = dict()
     
-    for column in tuple(columns):
+    for column in columns:
         if not (joined_column == column):
             column_dict[column] = """this.%s""" % column
 
@@ -44,13 +44,13 @@ def create_reducer(joined_column):
     """ % joined_column)
 
 
-def join(join_column, table1, table2):
+def join(table1, table2, join_column):
     slices_collection = db['slices']
 
-    transform(join_column, table1, ('country','lifespan'))
-    transform(join_column, table2, ('country','age'))
+    transform(table1, join_column, ['lifespan'])
+    transform(table2, join_column, ['age'])
 
-def transform(join_column, table, columns):
+def transform(table, join_column, columns):
     life_expect_map = create_map(join_column, columns)
     life_expect_reducer = create_reducer(join_column)
 
@@ -61,4 +61,4 @@ def transform(join_column, table, columns):
     table.map_reduce(life_expect_map, life_expect_reducer, {'reduce': 'joined'} )
 
 if __name__ == '__main__':
-    join('country', db.life_expectancy, db.life_stunted)
+    join(db.life_expectancy, db.life_stunted, 'country')
